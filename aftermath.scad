@@ -1,4 +1,5 @@
-use <dice_symbol.scad>;
+use <scad-commons/dice_symbol.scad>;
+use <scad-commons/target_symbol.scad>;
 
 boxSizeX = 136;
 boxSizeY = 154;
@@ -101,15 +102,20 @@ translate([0,0,-wallThickness]) {
 
 
 // fire symbol
-translate([fireTokensPositionX+fireTokensX/2, fireTokensPositionY+fireTokensY+2+fireSymbolSize/2,topLevel+symbolHeight-0.0002])
+fireSymbolPositionY=fireTokensPositionY+fireTokensY+2+fireSymbolSize/2;
+translate([fireTokensPositionX+fireTokensX/2, fireSymbolPositionY ,topLevel+symbolHeight-0.0002])
     resize([fireSymbolSize,fireSymbolSize, symbolHeight ])
         surface(file="firesymbol.png", center=true, invert=true);
 
 // target symbol
 targetSymbolSize = fireSymbolSize;
-translate([targetTokensPositionX+targetTokensX/2, targetTokensPositionY+targetTokensY+2+targetSymbolSize/2,topLevel+symbolHeight-0.0002])
-    resize([targetSymbolSize,targetSymbolSize, symbolHeight ])
-        surface(file="targetsymbol.png", center=true, invert=true);
+translate([targetTokensPositionX+targetTokensX/2, fireSymbolPositionY ,topLevel-0.1])
+    target_symbol(size=targetSymbolSize, height=symbolHeight+0.1, center=true)
+
+
+//translate([targetTokensPositionX+targetTokensX/2, targetTokensPositionY+targetTokensY+2+targetSymbolSize/2,topLevel+symbolHeight-0.0002])
+//    resize([targetSymbolSize,targetSymbolSize, symbolHeight ])
+//        surface(file="targetsymbol.png", center=true, invert=true);
 
 
 // party text
