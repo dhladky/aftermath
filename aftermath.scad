@@ -171,7 +171,8 @@ translate([0,0,-wallThickness]) {
 fireSymbolPositionY=fireTokensPositionY+fireTokensY+2+symbolSize/2;
 translate([fireTokensPositionX+fireTokensX/2, fireSymbolPositionY ,topLevel+symbolHeight-0.0002])
     resize([symbolSize,symbolSize, symbolHeight ])
-        surface(file="firesymbol.png", center=true, invert=true);
+    linear_extrude(height=symbolHeight)
+    import(file = "firesymbol.svg", center = true, dpi = 96) ;
 
 // target symbol
 translate([targetTokensPositionX+targetTokensX/2, fireSymbolPositionY ,topLevel-0.1])
