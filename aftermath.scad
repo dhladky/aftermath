@@ -1,46 +1,33 @@
 use <scad-commons/dice_symbol.scad>;
 use <scad-commons/target_symbol.scad>;
-use <scad-commons/magnifying_glass.scad>;
+use <scad-commons/magnifying_glass_symbol.scad>;
+use <scad-commons/battery_symbol.scad>;
+use <scad-commons/holes.scad>
 
 boxSizeX = 136;
 boxSizeY = 154;
-boxSizeHeight = 23; // bottom excluded 
-wallThickness=3;
+wallThickness=2;
 symbolHeight = 1;
 symbolSize=6;
 fontSize = 3;
-fingerHoleRadius = 5; 
-fingerHoleExtend = 5; // 
 
-safeTop = boxSizeHeight + 10; // big enough ceiling
-topLevel = boxSizeHeight - wallThickness;
-
+$holes_bottom_part_top = 22;
+$holes_bottom_thickness = 2;
 
 
 // ------------------------------------------------------------
-
 
 // the other tokens
 otherTokensX = 80;
 otherTokensY = 55;
 
-otherTokensTop = otherTokensY+wallThickness;
-
 // fire tokens
 fireTokensX = 20;
 fireTokensY = 13; 
 
-fireTokensPositionX = 2*wallThickness+otherTokensX;
-fireTokensPositionY = 2* wallThickness;
-
-
-
 // target tokens
 targetTokensX = 16;
 targetTokensY = 8;
-
-targetTokensPositionX = boxSizeX-2*wallThickness-targetTokensX;
-targetTokensPositionY= 2*wallThickness+fireTokensY-targetTokensY;
 
 // party token
 partyTokenX = 31;
@@ -58,6 +45,26 @@ batteryTokensX = 15;
 batteryTokensY = 20;
 batteryTokensHeight = 25;
 
+// cocroach tokens
+cocroachTokensX = 20;
+cocroachTokensY = 18;
+cocroachTokensHeight = 20;
+
+// hornet tokens
+hornetTokensX = 20;
+hornetTokensY = 10;
+//hornetTokensHeight = todo!
+
+// computations 
+//safeTop = boxSizeHeight + 10; // big enough ceiling
+
+otherTokensTop = otherTokensY+wallThickness;
+
+fireTokensPositionX = 2*wallThickness+otherTokensX;
+fireTokensPositionY = 2* wallThickness;
+
+targetTokensPositionX = boxSizeX-2*wallThickness-targetTokensX;
+targetTokensPositionY= 2*wallThickness+fireTokensY-targetTokensY;
 
 searchTokensFingerHoleX = searchTokensX / 2;
 
@@ -66,126 +73,107 @@ partyMiddle = (boxSizeX - wallThickness - otherTokensX)/2+ wallThickness + other
 
 difference(){
 
-translate([0,0,-wallThickness]) {
   cube([boxSizeX, boxSizeY, boxSizeHeight]);
     
-  linear_extrude(height=boxSizeHeight)  
-  polygon([[wallThickness, 0.0001],[boxSizeX-wallThickness, 0.0001], [boxSizeX-2*wallThickness, -wallThickness], [2*wallThickness, -wallThickness]]) ; 
-      
-  linear_extrude(height=boxSizeHeight)  
-  polygon([[wallThickness, boxSizeY-0.0001],[boxSizeX-wallThickness, boxSizeY-0.0001], [boxSizeX-2*wallThickness, boxSizeY+wallThickness], [2*wallThickness, boxSizeY+wallThickness]]) ; 
-  };
+//  linear_extrude(height=boxSizeHeight)  
+//  polygon([[wallThickness, 0.0001],[boxSizeX-wallThickness, 0.0001], [boxSizeX-2*wallThickness, -wallThickness], [2*wallThickness, -wallThickness]]) ; 
+//      
+//  linear_extrude(height=boxSizeHeight)  
+//  polygon([[wallThickness, boxSizeY-0.0001],[boxSizeX-wallThickness, boxSizeY-0.0001], [boxSizeX-2*wallThickness, boxSizeY+wallThickness], [2*wallThickness, boxSizeY+wallThickness]]) ; 
+
   
   // from here token holes
   //---------------------------------
   
   // the other tokens
-  translate([wallThickness, wallThickness, 0])
-     cube([otherTokensX, otherTokensY, safeTop]);
+//  translate([wallThickness, wallThickness, 0])
+//     cube([otherTokensX, otherTokensY, safeTop]);
   
-  
-  // fire tokens
-  fireTokensX = 20;
-  fireTokensY = 13; 
+  hole(size=[otherTokensX, otherTokensY], position=[wallThickness, wallThickness]) {
+      text("Other", halign="center", size=fontSize );
+  } 
+ 
   
   fireTokensPositionX = 2*wallThickness+otherTokensX;
   fireTokensPositionY = 2* wallThickness;
-  translate([fireTokensPositionX, fireTokensPositionY, topLevel-fireTokensX/2])
-     cube([fireTokensX, fireTokensY, safeTop]);
-  
-  // target tokens
-  translate([targetTokensPositionX, targetTokensPositionY , topLevel-targetTokensX/2])
-    cube([targetTokensX, targetTokensY, safeTop]);
-    
-  // party token
-  translate([partyMiddle, partyTokenPositionY, safeTop/2+topLevel - partyTokenHeight/2])
-    cube([partyTokenX, partyTokenY, safeTop], center = true);  
-    
-  // dice
-  diceX = 34;
-  diceY = 17;
-
-  diceBottom=topLevel-diceY/2;
-  translate([partyMiddle-diceX/2, otherTokensTop-diceY, diceBottom])
-    cube([diceX, diceY, safeTop]);  
-    
-  translate([partyMiddle, otherTokensTop-diceY/2,diceBottom-symbolHeight])  
-     dice_symbol(center=true, line_width=0.5, height = safeTop) ; 
-  
-  translate([partyMiddle, otherTokensTop-diceY/2,topLevel])
-    rotate([0, 90, 0])
-     cylinder(h=diceX+fingerHoleExtend*2, r=fingerHoleRadius, center=true);
-  
-  // search tokens
-  //-------------------------------------------------------------------------------
-  searchTokenPositionY = otherTokensY + 2*wallThickness + searchTokens2Y;
-  searchTokenPositionZ = topLevel-searchTokensX/2;
-  
-  // tokens 2
-  translate([wallThickness, searchTokenPositionY-searchTokens2Y, searchTokenPositionZ])
-  cube([searchTokensX, searchTokens2Y, safeTop]);
-  
-  searchToken2XMiddle = wallThickness+searchTokensX/2;
-  translate([searchToken2XMiddle,searchTokenPositionY-searchTokens2Y/2, searchTokenPositionZ-symbolHeight ])
-  magnifying_glass(text="2", height=symbolHeight, size=symbolSize+1, center=true);
-  
-  translate([searchToken2XMiddle, searchTokenPositionY-searchTokens2Y/2, topLevel])
-  rotate([90, 0, 0])
-     cylinder(h=searchTokens2Y+2*fingerHoleExtend, r=fingerHoleRadius, center=true);
-  
-  // tokens 3
-  translate([2*wallThickness+searchTokensX, searchTokenPositionY-searchTokens3Y, searchTokenPositionZ])
-  cube([searchTokensX, searchTokens3Y, safeTop]);
-  
-  searchToken3XMiddle = 2*wallThickness+searchTokensX*3/2;
-  translate([searchToken3XMiddle,searchTokenPositionY-searchTokens3Y/2, searchTokenPositionZ-symbolHeight ])
-  magnifying_glass(text="3", height=symbolHeight, size=symbolSize+1, center=true);
-  
-    translate([searchToken3XMiddle, searchTokenPositionY-searchTokens3Y/2, topLevel])
-  rotate([90, 0, 0])
-     cylinder(h=searchTokens3Y+2*fingerHoleExtend, r=fingerHoleRadius, center=true);
-  
-  // tokens 4
-  translate([3*wallThickness+2*searchTokensX, searchTokenPositionY-searchTokens4Y, searchTokenPositionZ])
-  cube([searchTokensX, searchTokens4Y, safeTop]);
-  
-  searchToken4XMiddle = 3*wallThickness+searchTokensX*5/2;
-  translate([searchToken4XMiddle,searchTokenPositionY-searchTokens4Y/2, searchTokenPositionZ-symbolHeight ])
-  magnifying_glass(text="4", height=symbolHeight, size=symbolSize+1, center=true);
-  
-    translate([searchToken4XMiddle, searchTokenPositionY-searchTokens4Y/2, topLevel])
-  rotate([90, 0, 0])
-     cylinder(h=searchTokens4Y+2*fingerHoleExtend, r=fingerHoleRadius, center=true);  
-  
-  // battery tokens
-  translate([4*wallThickness+3*searchTokensX, searchTokenPositionY-batteryTokensY, batteryTokensHeight/2])
-      cube([batteryTokensX, batteryTokensY, safeTop]);
-  
-  
-  
-  
-} // end difference
-
-
-// fire symbol
-fireSymbolPositionY=fireTokensPositionY+fireTokensY+2+symbolSize/2;
-translate([fireTokensPositionX+fireTokensX/2, fireSymbolPositionY ,topLevel+symbolHeight-0.0002])
-    resize([symbolSize,symbolSize, symbolHeight ])
-    linear_extrude(height=symbolHeight)
-    import(file = "firesymbol.svg", center = true, dpi = 96) ;
-
-// target symbol
-translate([targetTokensPositionX+targetTokensX/2, fireSymbolPositionY ,topLevel-0.1])
-    target_symbol(size=symbolSize, height=symbolHeight+0.1, center=true)
-
-
-// party text
-translate([partyMiddle, partyTokenPositionY+partyTokenY/2+2, topLevel -0.0001 ])
-  linear_extrude(height=symbolHeight+0.0001)
-    text("Party token", halign="center", size=fontSize );
-
-
-
-
-
-
+ 
+ 
+// 
+//  translate([fireTokensPositionX, fireTokensPositionY, topLevel-fireTokensX/2])
+//     cube([fireTokensX, fireTokensY, safeTop]);
+//  
+//  // target tokens
+//  translate([targetTokensPositionX, targetTokensPositionY , topLevel-targetTokensX/2])
+//    cube([targetTokensX, targetTokensY, safeTop]);
+//    
+//  // party token
+//  translate([partyMiddle, partyTokenPositionY, safeTop/2+topLevel - partyTokenHeight/2])
+//    cube([partyTokenX, partyTokenY, safeTop], center = true);  
+//    
+//  // dice
+//  diceX = 34;
+//  diceY = 17;
+//
+//  diceBottom=topLevel-diceY/2;
+//  translate([partyMiddle-diceX/2, otherTokensTop-diceY, diceBottom])
+//    cube([diceX, diceY, safeTop]);  
+//    
+//  translate([partyMiddle, otherTokensTop-diceY/2,diceBottom-symbolHeight])  
+//     dice_symbol(center=true, height = safeTop) ; 
+//  
+//  translate([partyMiddle, otherTokensTop-diceY/2,topLevel])
+//    rotate([0, 90, 0])
+//     cylinder(h=diceX+fingerHoleExtend*2, r=fingerHoleRadius, center=true);
+//  
+//  // search tokens
+//  //-------------------------------------------------------------------------------
+//  searchTokenPositionY = otherTokensY + 2*wallThickness + searchTokens2Y;
+//  
+//  // tokens 2  
+//  holeWithPictureAndFingerHoles(x=wallThickness, y=searchTokenPositionY-searchTokens2Y, size=[searchTokensX, searchTokens2Y, searchTokensX]) {
+//      magnifying_glass(text="2", height=symbolHeight+1, size=symbolSize, center=true);
+//  }
+// 
+//  // tokens 3
+//
+//  holeWithPictureAndFingerHoles(x=2*wallThickness+searchTokensX, y=searchTokenPositionY-searchTokens3Y, size=[searchTokensX, searchTokens3Y, searchTokensX]) {
+//      magnifying_glass(text="3", height=symbolHeight+1, size=symbolSize, center=true);
+//  }
+//
+//  // tokens 4
+//  holeWithPictureAndFingerHoles(x=3*wallThickness+2*searchTokensX, y=searchTokenPositionY-searchTokens4Y, size=[searchTokensX, searchTokens4Y, searchTokensX]) {
+//      magnifying_glass(text="4", height=symbolHeight+1, size=symbolSize, center=true);
+//  }
+//  
+//  
+//  // battery tokens
+//  holeWithPicture(x=4*wallThickness+3*searchTokensX, y=searchTokenPositionY-batteryTokensY, size=[batteryTokensX, batteryTokensY, batteryTokensHeight]) {
+//     battery_symbol(height = symbolHeight+1, size=symbolSize, $line_width=0.3, center=true);
+//  } 
+//
+//
+//  // cocroaches
+//  //cube()
+//  
+//  
+   } // end difference
+//
+//
+//// fire symbol
+//fireSymbolPositionY=fireTokensPositionY+fireTokensY+2+symbolSize/2;
+//translate([fireTokensPositionX+fireTokensX/2, fireSymbolPositionY ,topLevel+symbolHeight-0.0002])
+//    resize([symbolSize,symbolSize, symbolHeight ])
+//    linear_extrude(height=symbolHeight)
+//    import(file = "firesymbol.svg", center = true, dpi = 96) ;
+//
+//// target symbol
+//translate([targetTokensPositionX+targetTokensX/2, fireSymbolPositionY ,topLevel-0.1])
+//    target_symbol(size=symbolSize, height=symbolHeight+0.1, center=true)
+//
+//
+//// party text
+//translate([partyMiddle, partyTokenPositionY+partyTokenY/2+2, topLevel -0.0001 ])
+//  linear_extrude(height=symbolHeight+0.0001)
+//    text("Party token", halign="center", size=fontSize );
+//
+//
