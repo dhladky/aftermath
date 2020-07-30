@@ -1,8 +1,9 @@
-use <scad-commons/dice_symbol.scad>;
+use <scad-commons/2D/dice_symbol_2D.scad>;
 use <scad-commons/target_symbol.scad>;
 use <scad-commons/magnifying_glass_symbol.scad>;
 use <scad-commons/battery_symbol.scad>;
 use <scad-commons/holes.scad>
+use <fireSymbol.scad>
 
 boxSizeX = 136;
 boxSizeY = 154;
@@ -11,7 +12,7 @@ symbolHeight = 1;
 symbolSize=6;
 fontSize = 3;
 
-$holes_bottom_part_top = 22;
+$holes_bottom_part_top = 27;
 $holes_bottom_thickness = 2;
 
 
@@ -21,8 +22,12 @@ $holes_bottom_thickness = 2;
 otherTokensX = 80;
 otherTokensY = 55;
 
+// dice
+diceX = 34;
+diceY = 17;
+
 // fire tokens
-fireTokensX = 20;
+fireTokensX = 21;
 fireTokensY = 13; 
 
 // target tokens
@@ -33,6 +38,8 @@ targetTokensY = 8;
 partyTokenX = 31;
 partyTokenY = 3;
 partyTokenHeight = 20;
+
+spaceBetweenFireAndTarget = 6;
 
 // search tokens
 searchTokensX = 20;
@@ -46,12 +53,12 @@ batteryTokensY = 20;
 batteryTokensHeight = 25;
 
 // cocroach tokens
-cocroachTokensX = 20;
+cocroachTokensX = 21;
 cocroachTokensY = 18;
 cocroachTokensHeight = 20;
 
 // hornet tokens
-hornetTokensX = 20;
+hornetTokensX = 21;
 hornetTokensY = 10;
 //hornetTokensHeight = todo!
 
@@ -59,6 +66,16 @@ hornetTokensY = 10;
 //safeTop = boxSizeHeight + 10; // big enough ceiling
 
 otherTokensTop = otherTokensY+wallThickness;
+otherTokensRight = otherTokensX+wallThickness;
+
+
+
+ftOffsetX = (boxSizeX - (otherTokensRight + fireTokensX+ spaceBetweenFireAndTarget+targetTokensX))/2;
+
+
+
+
+
 
 fireTokensPositionX = 2*wallThickness+otherTokensX;
 fireTokensPositionY = 2* wallThickness;
@@ -71,9 +88,46 @@ searchTokensFingerHoleX = searchTokensX / 2;
 partyTokenPositionY = targetTokensPositionY+symbolSize+15;
 partyMiddle = (boxSizeX - wallThickness - otherTokensX)/2+ wallThickness + otherTokensX;
 
-difference(){
+union(){
 
-  cube([boxSizeX, boxSizeY, boxSizeHeight]);
+  cube([boxSizeX, boxSizeY, $holes_bottom_part_top]);
+    
+    
+  // the other tokens  
+  hole(size=[otherTokensX, otherTokensY], position=[wallThickness, wallThickness]) {
+      text("Other", halign="center", size=fontSize );
+  }   
+    
+  diceMiddleX = (boxSizeX-otherTokensRight)/2+otherTokensRight;
+  
+  
+  // dice hole
+  cubic_hole(size=[diceX, diceY], position=[diceMiddleX, otherTokensTop-diceY], centerX=true) {
+       dice_symbol_2D();
+  }
+
+  // fire tokens
+  echo(size=[fireTokensX, fireTokensY], position=[otherTokensRight+ftOffsetX, wallThickness]);
+  
+  cubic_hole(size=[fireTokensX, fireTokensY], position=[otherTokensRight+ftOffsetX, wallThickness], depth=fireTokensX/2);
+
+//  color("red")
+//  translate([otherTokensRight+ftOffsetX, wallThickness+fireTokensY, ($holes_bottom_part_top-symbolHeight)])
+//       resize([symbolSize,symbolSize, symbolHeight+0.1 ]){
+//           #include <fireSymbol.scad>  ;}
+//  
+
+
+  color("red")
+  fire_symbol();  
+  
+
+
+    
+  // target tokens  
+  cubic_hole(size=[targetTokensX, targetTokensY], position=[boxSizeX-ftOffsetX-targetTokensX, wallThickness+fireTokensY-targetTokensY], depth=targetTokensX/2);
+
+
     
 //  linear_extrude(height=boxSizeHeight)  
 //  polygon([[wallThickness, 0.0001],[boxSizeX-wallThickness, 0.0001], [boxSizeX-2*wallThickness, -wallThickness], [2*wallThickness, -wallThickness]]) ; 
@@ -89,13 +143,13 @@ difference(){
 //  translate([wallThickness, wallThickness, 0])
 //     cube([otherTokensX, otherTokensY, safeTop]);
   
-  hole(size=[otherTokensX, otherTokensY], position=[wallThickness, wallThickness]) {
-      text("Other", halign="center", size=fontSize );
-  } 
- 
-  
-  fireTokensPositionX = 2*wallThickness+otherTokensX;
-  fireTokensPositionY = 2* wallThickness;
+//  hole(size=[otherTokensX, otherTokensY], position=[wallThickness, wallThickness]) {
+//      text("Other", halign="center", size=fontSize );
+//  } 
+// 
+//  
+//  fireTokensPositionX = 2*wallThickness+otherTokensX;
+//  fireTokensPositionY = 2* wallThickness;
  
  
 // 
